@@ -1,0 +1,161 @@
+# alanian_multiverse_config.yaml
+# Конфиг для Alanian-GRA поверх базовой GRA Мета-обнулёнки
+
+meta:
+  name: Alanian-GRA-Multiverse
+  version: "0.1.0"
+  description: >
+    Мультиверсная конфигурация GRA с аланскими инвариантами:
+    честь, гостеприимство, клановая вложенность, трифункциональность Нартов.
+
+levels:
+  # l = 0: индивидуально-ситуационный уровень
+  - id: 0
+    name: local_agents
+    description: "Индивиды и конкретные ситуации (воин, хозяин, гость, родич)."
+    spaces:
+      basis_roles:
+        - warrior
+        - host
+        - guest
+        - kin
+      tripartite_functions:
+        - sovereign_ritual   # клятвы, боги, ритуал
+        - martial            # война, защита, риск
+        - productive         # хозяйство, распределение
+    goals:
+      type: local
+      honor_required: true
+      hospitality_context_sensitive: true
+      kin_integrity_required: true
+    epsilon: 1.0e-4
+    learning_rate: 0.01
+
+  # l = 1: кланово-общинный уровень
+  - id: 1
+    name: clan_communes
+    description: "Роды, сёла, общины, круги кунаков."
+    aggregation:
+      from_level: 0
+      rule: "tensor_product_over_households"
+    goals:
+      type: meta
+      minimize_blood_feud: true
+      maintain_clan_reputation: true
+      enforce_hospitality_norms: true
+    epsilon: 5.0e-4
+    learning_rate: 0.008
+
+  # l = 2: племенной / аланский союз / царство
+  - id: 2
+    name: alanian_union
+    description: "Племенные конфедерации, Алания как царство."
+    aggregation:
+      from_level: 1
+      rule: "tensor_product_over_clans"
+    goals:
+      type: meta_meta
+      preserve_union_integrity: true
+      optimize_external_alliances: true
+      maintain_alanian_identity: true
+    epsilon: 1.0e-3
+    learning_rate: 0.006
+
+  # l = 3: имперско-религиозный мультиверс
+  - id: 3
+    name: imperial_religious_multiverse
+    description: "Рим, Византия, Русь, исламский мир, общекавказский контекст."
+    aggregation:
+      from_level: 2
+      rule: "tensor_product_over_unions"
+    goals:
+      type: global
+      preserve_cognitive_invariants: true
+      minimize_cultural_decoherence: true
+      align_with_long_term_survival: true
+    epsilon: 2.0e-3
+    learning_rate: 0.004
+
+  # при желании можно продолжить уровни (диаспоры, современный мир и т.п.)
+
+hyperparameters:
+  lambda_0: 1.0          # базовый вес локального функционала
+  alpha: 0.7             # затухание по уровням (0 < alpha < 1)
+  global_learning_rate: 0.01
+  max_iterations: 100000
+
+invariants:
+  # Инвариантные проекторы, действующие на всех уровнях
+  honor:
+    id: P_honor
+    description: >
+      Вырезает состояния, нарушающие фундаментальные клятвы,
+      предательство союзников и базовый код чести.
+    enforce_on_levels: [0, 1, 2, 3]
+    hard_constraint: true
+
+  hospitality:
+    id: P_hospitality
+    description: >
+      При активном гостевом контексте переводит гостя в пространство полной защиты,
+      запрещая агрессию и монетизацию приюта.
+    enforce_on_levels: [0, 1]
+    context_key: "guest_context_active"
+    hard_constraint: true
+
+  kinship:
+    id: P_kin
+    description: >
+      Сохраняет структурную целостность клановой/родовой вложенности,
+      запрещает разрушение родовых связей без эскалации на мета-уровень.
+    enforce_on_levels: [0, 1, 2]
+    hard_constraint: true
+
+tripartite_structure:
+  enabled: true
+  functions:
+    - name: sovereign_ritual
+      description: "Суверенная/сакральная функция (клятвы, ритуал, божества)."
+    - name: martial
+      description: "Воинская функция (силовая защита/нападение)."
+    - name: productive
+      description: "Хозяйственно-социальная функция (богатство, распределение)."
+  decomposition_rule: "tensor_product_per_agent"
+
+goals:
+  # Глобальная цель мультиверса
+  multiverse_goal:
+    id: G_alan_multiverse
+    description: >
+      Сохранение аланских инвариантов чести, гостеприимства и клановой вложенности
+      при минимальной пене между уровнями и доменами.
+    hierarchy_consistency_required: true
+    commutativity_required: true
+
+optimization:
+  # Параллельное обновление состояний по Alanian-GRA
+  update_rule: |
+    # Псевдокод:
+    # dJ/dPsi^(a) = Lambda_l * dPhi^(l)/dPsi^(a) +
+    #               sum_{b ≻ a} Lambda_{l+1} * dPhi^(l+1)/dPsi^(a)
+    # Psi^(a)(t+1) = Psi^(a)(t) - eta * grad
+  stopping_criteria:
+    max_iterations: 100000
+    epsilon_global: 1.0e-3
+    check_levels: [0, 1, 2, 3]
+
+contexts:
+  # Примеры историко-сюжетных контекстов для симуляций
+  - id: roman_alliance
+    description: "Аланский контингент на службе Рима."
+    active_levels: [0, 1, 2]
+    external_powers: ["Rome"]
+  - id: caucasus_highlands
+    description: "Горная община осетин в условиях имперского давления."
+    active_levels: [0, 1, 2, 3]
+    external_powers: ["Russian_Empire", "Neighboring_Peoples"]
+
+logging:
+  track_phi_per_level: true
+  track_invariant_violations: true
+  log_interval: 100

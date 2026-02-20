@@ -1,0 +1,18 @@
+Alanian-Trace-in-Philosophy/
+  README.md
+  /docs
+    01_scythian_sarmatian_alanian_lineage.md
+    02_abaris_anacharsis_prototypes.md
+    03_ossetian_alanian_cults_and_narts.md
+    04_alanian_cognitive_architecture.md
+    05_gra_alanian_multiverse_mapping.md
+    06_manifesto_alanian_objectivity_ru.md
+  /theory
+    gra_alanian_multiverse_formalization.md
+    category_of_alanian_vacuums.md
+  /models
+    alanian_multiverse_config.yaml
+    pseudo_code_alanian_gra.py
+  /media
+    diagrams/
+    maps/
