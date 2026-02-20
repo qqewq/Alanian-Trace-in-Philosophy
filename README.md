@@ -1,3 +1,4 @@
+https://doi.org/10.5281/zenodo.18709134
 # Alanian Trace in Philosophy and AI  
 ### From Scythian–Alan Wisdom to Multiverse GRA Meta-Nulling
 
@@ -144,5 +145,6 @@ Alanian-Trace-in-Philosophy/
 2. Перейди к `docs/04_` и `docs/05_`, где идёт переход к архитектурному языку.  
 3. Открой `theory/gra_alanian_multiverse_formalization.md`, чтобы увидеть формализацию на уровне \(\mathcal{H}\), \(\Phi^{(l)}\), \(G_l\). [github](https://github.com/qqewq/GRA-Meta-Nulling-Foundations/issues)
 4. Посмотри `models/pseudo_code_alanian_gra.py` как намёк на то, как всё это может лечь в реальные агенты.  
+
 
 Если нужно, я могу дальше сгенерировать полный текст любого из файлов в `docs/` или `theory/` под твой стиль.
